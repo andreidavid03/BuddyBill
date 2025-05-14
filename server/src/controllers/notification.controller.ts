@@ -1,0 +1,25 @@
+import { Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+interface AuthRequest extends Request {
+  userId?: string;
+}
+
+export const markNotificationAsRead = async (req: AuthRequest, res: Response): Promise<void> => {
+  const { notificationId } = req.params;
+
+  try {
+    const updated = await prisma.notification.update({
+  where: { id: notificationId },
+  data: { isRead: true }, // acum Prisma știe că există acest câmp
+});
+
+
+    res.json({ message: "Notification marked as read", updated });
+  } catch (error) {
+    console.error(error);
+    res.status(404).json({ message: "Notification not found" });
+  }
+};

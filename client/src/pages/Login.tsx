@@ -1,6 +1,6 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../data/api"; // folosește instanța corectă
+import api from "../data/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -9,48 +9,50 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-      const res = await api.post("/auth/login", { email, password });
+      const response = await api.post("/auth/login", { email, password });
+      const { token, refreshToken } = response.data;
 
-      // Salvează tokenul primit
-      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("token", token);
+      localStorage.setItem("refreshToken", refreshToken);
 
-      // Redirecționează spre dashboard
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
       navigate("/dashboard");
-    } catch (err: any) {
-      if (err.response && err.response.status === 401) {
-        alert("Invalid password");
-      } else if (err.response && err.response.status === 400) {
-        alert("User not found");
-      } else {
-        alert("Login failed");
-      }
+    } catch (error) {
+      console.error("Login failed:", error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">Login</h2>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="w-full border p-2 mb-2"
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="w-full border p-2 mb-4"
-        required
-      />
-      <button type="submit" className="bg-blue-600 text-white w-full py-2 rounded">
-        Login
-      </button>
-    </form>
+    <div className="flex flex-col min-h-screen">
+      <div className="page-container">
+        <h2 className="text-title text-center">Login</h2>
+        <form onSubmit={handleSubmit} className="p-4 max-w-md mx-auto" autoComplete="off">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border p-2 mb-2 rounded"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            className="w-full border p-2 mb-4 rounded"
+            required
+          />
+          <button type="submit" className="btn-primary">
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 

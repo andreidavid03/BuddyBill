@@ -3,5 +3,33 @@
 @tailwind utilities;
 
 body {
-  @apply bg-gray-100 text-gray-900;
+  @apply bg-gradient-to-r from-blue-100 to-blue-300 text-gray-700 min-h-screen flex flex-col;
+}
+
+.page-container {
+  @apply flex-grow flex flex-col items-center p-6 rounded-lg shadow-md bg-white;
+}
+
+.btn-primary {
+  @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300;
+}
+
+.btn-secondary {
+  @apply bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition duration-300;
+}
+
+.btn-success {
+  @apply bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300;
+}
+
+.btn-danger {
+  @apply bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-300;
+}
+
+.text-title {
+  @apply text-3xl font-bold text-gray-800 mb-4;
+}
+
+.text-body {
+  @apply text-gray-700;
 }

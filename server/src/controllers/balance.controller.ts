@@ -5,15 +5,21 @@ const prisma = new PrismaClient();
 
 interface AuthRequest extends Request {
   userId?: string;
+  params: {
+    groupId: string;
+  };
 }
 
 // Calculare balanțe într-un grup
 export const calculateBalances = async (req: AuthRequest, res: Response): Promise<void> => {
   const { groupId } = req.params;
+  const userId = req.userId;
 
   try {
     const expenses = await prisma.expense.findMany({
-      where: { groupId },
+      where: {
+        tripId: groupId, // Use tripId instead of groupId
+      },
     });
 
     if (expenses.length === 0) {
@@ -21,31 +27,23 @@ export const calculateBalances = async (req: AuthRequest, res: Response): Promis
       return;
     }
 
-    const members = await prisma.group.findUnique({
+    const trip = await prisma.trip.findUnique({
       where: { id: groupId },
-      include: { members: true },
+      include: { user: true, expenses: true }, // Include user and expenses
     });
 
-    if (!members) {
-      res.status(404).json({ message: "Group not found" });
+    if (!trip) {
+      res.status(404).json({ message: "Trip not found" });
       return;
     }
 
     const balances: Record<string, number> = {};
 
-    members.members.forEach(member => {
-      balances[member.id] = 0;
-    });
+    // Initialize balances for the trip creator
+    balances[trip.userId] = 0;
 
     expenses.forEach(expense => {
-      const splitAmount = expense.amount / members.members.length;
-      
-      members.members.forEach(member => {
-        if (member.id === expense.groupId) {
-          balances[member.id] += expense.amount;
-        }
-        balances[member.id] -= splitAmount;
-      });
+      balances[trip.userId] -= expense.amount; // Subtract expense amount from trip creator's balance
     });
 
     res.json({ balances });

@@ -5,20 +5,22 @@ const prisma = new PrismaClient();
 
 interface AuthRequest extends Request {
   userId?: string;
+  params: {
+    tripId?: string;
+    userId?: string;
+  };
 }
 
-// ✅ 1. Vizualizare tranzacții pentru un utilizator într-un grup
+// ✅ 1. Vizualizare tranzacții pentru un utilizator într-un trip
 export const getUserTransactions = async (req: AuthRequest, res: Response): Promise<void> => {
-  const { groupId } = req.params;
+  const { tripId } = req.params;
   const userId = req.userId;
 
   try {
     const expenses = await prisma.expense.findMany({
       where: {
-        groupId,
-        group: {
-          members: { some: { id: userId } },
-        },
+        tripId: tripId,
+        userId: userId,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -32,16 +34,14 @@ export const getUserTransactions = async (req: AuthRequest, res: Response): Prom
   }
 };
 
-// ✅ 2. Vizualizare toate tranzacțiile unui utilizator în toate grupurile
+// ✅ 2. Vizualizare toate tranzacțiile unui utilizator în toate trip-urile
 export const getAllUserTransactions = async (req: AuthRequest, res: Response): Promise<void> => {
   const userId = req.userId;
 
   try {
     const expenses = await prisma.expense.findMany({
       where: {
-        group: {
-          members: { some: { id: userId } },
-        },
+        userId: userId,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -55,17 +55,15 @@ export const getAllUserTransactions = async (req: AuthRequest, res: Response): P
   }
 };
 
-// ✅ 3. Filtrare tranzacții per utilizator într-un grup
+// ✅ 3. Filtrare tranzacții per utilizator într-un trip
 export const getFilteredTransactions = async (req: AuthRequest, res: Response): Promise<void> => {
-  const { groupId, userId } = req.params;
+  const { tripId, userId } = req.params;
 
   try {
     const expenses = await prisma.expense.findMany({
       where: {
-        groupId,
-        group: {
-          members: { some: { id: userId } },
-        },
+        tripId: tripId,
+        userId: userId,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -85,9 +83,7 @@ export const getUnpaidTransactions = async (req: AuthRequest, res: Response): Pr
     const unpaidExpenses = await prisma.expense.findMany({
       where: {
         isPaid: false,
-        group: {
-          members: { some: { id: userId } },
-        },
+        userId: userId,
       },
       orderBy: { createdAt: "desc" },
     });

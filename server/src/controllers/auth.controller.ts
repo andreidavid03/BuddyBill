@@ -19,87 +19,72 @@ const generateRefreshToken = (userId: string) => {
   return jwt.sign({ userId }, JWT_REFRESH_SECRET, { expiresIn: "7d" });
 };
 
-export const login = async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
-
-  try {
-    // Verifică dacă utilizatorul există
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      res.status(400).json({ message: "User not found" });
-      return;
-    }
-
-    // Verifică dacă parola este corectă
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      res.status(401).json({ message: "Invalid password" });
-      return;
-    }
-
-    // Generează token-ul JWT
-    const token = generateToken(user.id);
-    const refreshToken = generateRefreshToken(user.id);
-
-    // Returnează token-ul JWT în răspuns
-    res.json({ token, refreshToken });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: "Login failed" });
-  }
-};
-
 export const register = async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
+  const { email, password, name } = req.body;
 
-  // Validare simplă a datelor de intrare
   if (!email || !password) {
     res.status(400).json({ message: "Email and password are required" });
     return;
   }
 
-  // Verifică dacă adresa de email este validă
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     res.status(400).json({ message: "Invalid email address" });
     return;
   }
 
-  // Verifică dacă parola respectă anumite criterii de complexitate
   if (password.length < 6) {
     res.status(400).json({ message: "Password must be at least 6 characters long" });
     return;
   }
 
   try {
-    // Verifică dacă utilizatorul există deja
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       res.status(400).json({ message: "User already exists" });
       return;
     }
 
-    // Generează salt-ul și hash-ul parolei
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Creează utilizatorul în baza de date
     const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-      },
+      data: { email, password: hashedPassword, name },
     });
 
-    // Generează token-ul JWT
     const token = generateToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
 
-    // Returnează token-ul JWT în răspuns
     res.status(201).json({ token, refreshToken });
   } catch (error) {
     console.error("Registration error:", error);
     res.status(500).json({ message: "Registration failed" });
+  }
+};
+
+export const login = async (req: Request, res: Response): Promise<void> => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      res.status(400).json({ message: "User not found" });
+      return;
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      res.status(401).json({ message: "Invalid password" });
+      return;
+    }
+
+    const token = generateToken(user.id);
+    const refreshToken = generateRefreshToken(user.id);
+
+    res.json({ token, refreshToken });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Login failed" });
   }
 };
 
@@ -112,13 +97,9 @@ export const refreshToken = async (req: Request, res: Response): Promise<void> =
   }
 
   try {
-    // Verify the refresh token
     const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as { userId: string };
-
-    // Generate a new JWT token
     const token = generateToken(decoded.userId);
     const newRefreshToken = generateRefreshToken(decoded.userId);
-
     res.json({ token, refreshToken: newRefreshToken });
   } catch (error) {
     console.error("Error refreshing token:", error);
@@ -133,5 +114,24 @@ export const getAllUsers = async (req: AuthRequest, res: Response): Promise<void
   } catch (error) {
     console.error("Error fetching users:", error);
     res.status(500).json({ message: "Failed to fetch users" });
+  }
+};
+
+export const getCurrentUser = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.userId },
+      select: { id: true, email: true, name: true },
+    });
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching current user:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

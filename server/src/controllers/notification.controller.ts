@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 interface AuthRequest extends Request {
   userId?: string;
   params: {
-    notificationId: string; // Marcat ca obligatoriu
+    notificationId: string;
   };
 }
 
@@ -32,7 +32,7 @@ export const markNotificationAsRead = async (req: AuthRequest, res: Response): P
   try {
     const updated = await prisma.notification.update({
       where: { id: notificationId },
-      data: { isRead: true }, // acum Prisma știe că există acest câmp
+      data: { isRead: true },
     });
 
     res.json({ message: "Notification marked as read", updated });

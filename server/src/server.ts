@@ -1,43 +1,44 @@
+// server/src/server.ts
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes";
-import expenseRoutes from "./routes/expense.routes";
+import expenseRoutes from "./routes/expense.routes"; // Păstrează dacă ai rute globale de expense
 import balanceRoutes from "./routes/balance.routes";
 import transactionRoutes from "./routes/transaction.routes";
 import paymentRoutes from "./routes/payment.routes";
 import notificationRoutes from "./routes/notification.routes";
-import tripRoutes from "./routes/trip.routes"; // Import trip routes
-import statusRoutes from "./routes/status.routes"; // Import status routes
+import tripRoutes from "./routes/trip.routes";
+import statusRoutes from "./routes/status.routes";
+import friendRoutes from "./routes/friend.routes";
 
 dotenv.config();
 const app = express();
 
-// Configure CORS
 const corsOptions = {
-  origin: "http://localhost:5173", // URL-ul clientului tău
-  credentials: true, // Permite trimiterea cookie-urilor
-  optionsSuccessStatus: 200, // Unele browsere au nevoie de asta pentru a funcționa corect
+  origin: "http://localhost:5173",
+  credentials: true,
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Rute
-app.use("/api/auth", authRoutes);
-app.use("/api/expenses", expenseRoutes);
-app.use("/api/balances", balanceRoutes);
-app.use("/api/transactions", transactionRoutes);
-app.use("/api/payments", paymentRoutes);
-app.use("/api/notifications", notificationRoutes);
-app.use("/api/trips", tripRoutes); // Use trip routes
-app.use("/api/status", statusRoutes); // Use status routes
+app.use("/auth", authRoutes);
+app.use("/expenses", expenseRoutes); // Poți elimina asta dacă toate rutele de expenses sunt sub /trips/:id/expenses
+app.use("/balances", balanceRoutes);
+app.use("/transactions", transactionRoutes);
+app.use("/payments", paymentRoutes);
+app.use("/notifications", notificationRoutes);
+app.use("/trips", tripRoutes);
+app.use("/status", statusRoutes);
+app.use("/friends", friendRoutes);
 
 app.get("/", (req, res) => {
-  res.send("BuddyBill Backend is running!");
+  res.send("API is running...");
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

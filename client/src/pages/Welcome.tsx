@@ -1,26 +1,83 @@
+import React from "react";
+import { Box, Typography, Button, Container, Stack, Card, CardContent } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const Welcome = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-200 to-green-200">
-      <h1 className="text-5xl font-extrabold text-gray-800 mb-8">BuddyBill</h1>
-      <div className="flex gap-6">
-        <button
-          onClick={() => navigate("/login")}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300"
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        justifyContent: "center",
+        alignItems: "center",
+        bgcolor: "background.default",
+        color: "text.primary",
+        background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)", // gradient subtil pentru fundal
+      }}
+    >
+      <Container maxWidth="sm">
+        <Card
+          sx={{
+            bgcolor: "background.paper",
+            boxShadow: 6,
+            borderRadius: 4,
+            p: 3,
+            transition: "transform 0.2s ease-in-out",
+            "&:hover": { transform: "scale(1.02)" }, // mică animație la hover
+          }}
         >
-          Login
-        </button>
-        <button
-          onClick={() => navigate("/register")}
-          className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300"
-        >
-          Register
-        </button>
-      </div>
-    </div>
+          <CardContent>
+            <Typography variant="h3" align="center" gutterBottom sx={{ fontWeight: 700 }}>
+              Bine ai venit la BuddyBill!
+            </Typography>
+
+            <Typography variant="subtitle1" align="center" sx={{ mb: 3, color: "text.secondary" }}>
+              Organizează-ți cheltuielile de grup și vezi cât datorezi sau cât primești.
+              Totul ușor și clar!
+            </Typography>
+
+            <Stack direction="column" spacing={2} sx={{ mt: 4 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                fullWidth
+                sx={{
+                  boxShadow: 3,
+                  "&:hover": { boxShadow: 6 },
+                  textTransform: "capitalize",
+                }}
+                onClick={() => navigate("/register")}
+              >
+                Înregistrează-te
+              </Button>
+
+              <Button
+                variant="outlined"
+                color="primary"
+                size="large"
+                fullWidth
+                sx={{
+                  textTransform: "capitalize",
+                  borderColor: "primary.main",
+                  color: "primary.main",
+                  "&:hover": {
+                    borderColor: "primary.light",
+                    bgcolor: "action.hover",
+                  },
+                }}
+                onClick={() => navigate("/login")}
+              >
+                Conectează-te
+              </Button>
+            </Stack>
+          </CardContent>
+        </Card>
+      </Container>
+    </Box>
   );
 };
 

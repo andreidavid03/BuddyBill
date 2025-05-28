@@ -31,6 +31,7 @@ const TripDetails = () => {
   const [trip, setTrip] = useState<Trip | null>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [addFriendModalOpen, setAddFriendModalOpen] = useState(false);
+  const [allFriends, setAllFriends] = useState<Friend[]>([]); // State for all friends
 
   const fetchFriends = useCallback(async () => {
     if (!id) return;
@@ -108,8 +109,9 @@ const TripDetails = () => {
         <AddFriendModal
           open={addFriendModalOpen}
           onClose={handleAddFriendModalClose}
-          tripId={id || ""}
+          tripId={id!}
           onFriendAdded={handleFriendAdded}
+          allFriends={allFriends} // Asigură-te că transmiți această proprietate
         />
       </div>
     </div>

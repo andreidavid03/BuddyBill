@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../data/api";
 import Navbar from "../layout/Navbar";
+import { Box, Typography, Paper, List, ListItem, ListItemText } from "@mui/material";
 
 interface Notification {
   id: string;
@@ -15,9 +16,11 @@ const NotificationList = () => {
   const fetchNotifications = async () => {
     try {
       const res = await api.get("/notifications");
-      setNotifications(res.data);
+      // Verificăm dacă primim un array valid, altfel fallback la []
+      setNotifications(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Failed to fetch notifications", err);
+      setNotifications([]); // fallback la []
     }
   };
 
@@ -26,32 +29,59 @@ const NotificationList = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-800 to-gray-900 text-white">
       <Navbar />
-      <div className="flex flex-col items-center p-6">
-        <h2 className="text-2xl font-bold mb-4 text-center">Your Notifications</h2>
-        <div className="bg-gray-50 rounded-lg shadow-md p-6 w-full max-w-md">
+      <Box className="flex-grow flex flex-col items-center justify-center p-4">
+        <Paper
+          elevation={6}
+          sx={{
+            p: 4,
+            borderRadius: 4,
+            bgcolor: "rgba(255,255,255,0.05)",
+            backdropFilter: "blur(10px)",
+            width: "100%",
+            maxWidth: 600,
+            mx: "auto",
+            color: "white",
+          }}
+        >
+          <Typography variant="h4" align="center" gutterBottom sx={{ color: "white" }}>
+            Your Notifications
+          </Typography>
+
           {notifications.length === 0 ? (
-            <p className="text-gray-500">No notifications yet.</p>
+            <Typography sx={{ color: "white", textAlign: "center" }}>
+              No notifications yet.
+            </Typography>
           ) : (
-            <ul className="space-y-3">
+            <List>
               {notifications.map((note) => (
-                <li
+                <ListItem
                   key={note.id}
-                  className={`p-4 rounded shadow ${
-                    note.isRead ? "bg-gray-100" : "bg-white border-l-4 border-blue-500"
-                  }`}
+                  divider
+                  sx={{
+                    bgcolor: note.isRead
+                      ? "rgba(255,255,255,0.05)"
+                      : "rgba(255,255,255,0.1)",
+                    borderLeft: note.isRead ? "4px solid transparent" : "4px solid #3b82f6",
+                  }}
                 >
-                  <p className="text-gray-800">{note.message}</p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(note.createdAt).toLocaleString()}
-                  </p>
-                </li>
+                  <ListItemText
+                    primary={
+                      <span style={{ color: "white" }}>{note.message}</span>
+                    }
+                    secondary={
+                      <span style={{ color: "rgba(255,255,255,0.7)" }}>
+                        {new Date(note.createdAt).toLocaleString()}
+                      </span>
+                    }
+                  />
+                </ListItem>
               ))}
-            </ul>
+            </List>
           )}
-        </div>
-      </div>
+        </Paper>
+      </Box>
     </div>
   );
 };

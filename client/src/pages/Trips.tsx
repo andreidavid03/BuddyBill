@@ -9,6 +9,9 @@ import {
   ListItem,
   ListItemText,
   IconButton,
+  Paper,
+  Typography,
+  Box,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -60,55 +63,88 @@ const Trips = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-800 to-gray-900 text-white">
       <Navbar />
-      <div className="page-container">
-        <h2 className="text-title text-center">Trips</h2>
+      <Box className="flex-grow flex flex-col items-center justify-center p-4">
+        <Paper
+          elevation={6}
+          sx={{
+            p: 4,
+            borderRadius: 4,
+            bgcolor: "rgba(255, 255, 255, 0.05)",
+            backdropFilter: "blur(10px)",
+            width: "100%",
+            maxWidth: 600,
+            mx: "auto", // 👈 Centrat pe orizontală
+          }}
+        >
+          <Typography
+            variant="h4"
+            align="center"
+            gutterBottom
+            sx={{ color: "#ffffff" }} // 👈 Alb clar!
+          >
+            Your Trips
+          </Typography>
 
-        <div className="mb-4 flex items-center">
-          <TextField
-            label="New Trip Name"
-            variant="outlined"
-            value={newTripName}
-            onChange={(e) => setNewTripName(e.target.value)}
-            className="mr-2"
-          />
-          <Button variant="contained" color="success" onClick={handleCreateTrip}>
-            Create Trip
-          </Button>
-        </div>
+          <Box
+            display="flex"
+            gap={2}
+            mb={4}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <TextField
+              label="New Trip Name"
+              variant="outlined"
+              value={newTripName}
+              onChange={(e) => setNewTripName(e.target.value)}
+              sx={{
+                input: { color: "white" },
+                "& label": { color: "rgba(255,255,255,0.6)" },
+                "& fieldset": { borderColor: "rgba(255,255,255,0.2)" },
+              }}
+            />
+            <Button variant="contained" color="primary" onClick={handleCreateTrip}>
+              Create
+            </Button>
+          </Box>
 
-        <List>
-          {trips.map((trip) => (
-            <ListItem
-              key={trip.id}
-              secondaryAction={
-                <div
-                  className="flex items-center"
-                  style={{ marginRight: "-24px" }}
-                >
-                  <IconButton
-                    edge="end"
-                    aria-label="edit"
-                    onClick={() => handleEditTrip(trip.id)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => handleDeleteTrip(trip.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </div>
-              }
-            >
-              <ListItemText primary={trip.name} />
-            </ListItem>
-          ))}
-        </List>
-      </div>
+          <List>
+            {trips.map((trip) => (
+              <ListItem
+                key={trip.id}
+                divider
+                secondaryAction={
+                  <Box>
+                    <IconButton
+                      edge="end"
+                      aria-label="edit"
+                      onClick={() => handleEditTrip(trip.id)}
+                      sx={{ color: "rgba(255,255,255,0.7)" }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => handleDeleteTrip(trip.id)}
+                      sx={{ color: "rgba(255,255,255,0.7)" }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+                }
+              >
+                <ListItemText
+                  primary={trip.name}
+                  primaryTypographyProps={{ color: "white" }}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
+      </Box>
     </div>
   );
 };

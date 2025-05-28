@@ -15,7 +15,7 @@ const Welcome = () => {
         alignItems: "center",
         bgcolor: "background.default",
         color: "text.primary",
-        background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)", // gradient subtil pentru fundal
+        background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)", 
       }}
     >
       <Container maxWidth="sm">
@@ -26,7 +26,7 @@ const Welcome = () => {
             borderRadius: 4,
             p: 3,
             transition: "transform 0.2s ease-in-out",
-            "&:hover": { transform: "scale(1.02)" }, // mică animație la hover
+            "&:hover": { transform: "scale(1.02)" }, 
           }}
         >
           <CardContent>

@@ -16,11 +16,11 @@ const NotificationList = () => {
   const fetchNotifications = async () => {
     try {
       const res = await api.get("/notifications");
-      // Verificăm dacă primim un array valid, altfel fallback la []
+      
       setNotifications(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Failed to fetch notifications", err);
-      setNotifications([]); // fallback la []
+      setNotifications([]); 
     }
   };
 

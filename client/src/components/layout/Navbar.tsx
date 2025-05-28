@@ -15,8 +15,8 @@ const Navbar = () => {
     <AppBar
       position="static"
       sx={{
-        backgroundColor: "rgba(0, 0, 0, 0.4)", // semitransparent
-        backdropFilter: "blur(10px)", // efect de blur
+        backgroundColor: "rgba(0, 0, 0, 0.4)", 
+        backdropFilter: "blur(10px)", 
         boxShadow: "none",
       }}
     >

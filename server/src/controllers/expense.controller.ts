@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Creare expense cu notificări
+
 export const createExpense = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   const { description, amount, payerId, participants } = req.body;
@@ -50,7 +50,7 @@ export const createExpense = async (req: Request, res: Response): Promise<void> 
       },
     });
 
-    // 🔔 Trimite notificări participanților (exclus plătitorul)
+    
     for (const participantId of participants) {
       if (participantId !== payerId) {
         await prisma.notification.create({
@@ -71,7 +71,7 @@ export const createExpense = async (req: Request, res: Response): Promise<void> 
   }
 };
 
-// Obține toate expenses pentru trip
+
 export const getExpensesForTrip = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
 
@@ -92,7 +92,7 @@ export const getExpensesForTrip = async (req: Request, res: Response): Promise<v
   }
 };
 
-// Ștergere expense
+
 export const deleteExpense = async (req: Request, res: Response): Promise<void> => {
   const { expenseId } = req.params;
 

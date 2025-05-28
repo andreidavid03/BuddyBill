@@ -11,7 +11,7 @@ interface AuthRequest extends Request {
   };
 }
 
-// ✅ 1. Vizualizare tranzacții pentru un utilizator într-un trip
+
 export const getUserTransactions = async (req: AuthRequest, res: Response): Promise<void> => {
   const { tripId } = req.params;
   const userId = req.userId;
@@ -34,7 +34,7 @@ export const getUserTransactions = async (req: AuthRequest, res: Response): Prom
   }
 };
 
-// ✅ 2. Vizualizare toate tranzacțiile unui utilizator în toate trip-urile
+
 export const getAllUserTransactions = async (req: AuthRequest, res: Response): Promise<void> => {
   const userId = req.userId;
 
@@ -55,7 +55,7 @@ export const getAllUserTransactions = async (req: AuthRequest, res: Response): P
   }
 };
 
-// ✅ 3. Filtrare tranzacții per utilizator într-un trip
+
 export const getFilteredTransactions = async (req: AuthRequest, res: Response): Promise<void> => {
   const { tripId, userId } = req.params;
 
@@ -75,7 +75,7 @@ export const getFilteredTransactions = async (req: AuthRequest, res: Response): 
   }
 };
 
-// ✅ 4. Vizualizare tranzacții neplătite per utilizator
+
 export const getUnpaidTransactions = async (req: AuthRequest, res: Response): Promise<void> => {
   const userId = req.userId;
 

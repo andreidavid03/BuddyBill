@@ -7,10 +7,10 @@ import {
 
 const router = express.Router();
 
-// Ruta pentru a obține toate notificările utilizatorului
+
 router.get("/", verifyToken, getNotifications);
 
-// Ruta pentru a marca o notificare ca citită
+
 router.patch("/:notificationId/read", verifyToken, markNotificationAsRead);
 
 export default router;

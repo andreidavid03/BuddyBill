@@ -1,33 +1,33 @@
-// server/src/controllers/trip.controller.ts
+
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { createExpense } from "./expense.controller"; // Importă funcția createExpense
+import { createExpense } from "./expense.controller"; 
 
 const prisma = new PrismaClient();
 
-// Extinde Request pentru a include userId
+
 interface AuthRequest extends Request {
   userId?: string;
 }
 
 export const getAllTrips = async (req: AuthRequest, res: Response): Promise<void> => {
-  const userId = req.userId; // Obține userId-ul din token
+  const userId = req.userId; 
 
   try {
     if (!userId) {
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
-    // Găsește toate trip-urile unde utilizatorul este fie creator (userId), fie participant
+    
     const trips = await prisma.trip.findMany({
       where: {
         OR: [
-          { userId: userId }, // Utilizatorul este creatorul trip-ului
-          { users: { some: { id: userId } } }, // Utilizatorul este participant în trip
+          { userId: userId }, 
+          { users: { some: { id: userId } } }, 
         ],
       },
       include: {
-        users: { // Include participanții trip-ului pentru afișare
+        users: { 
           select: {
             id: true,
             name: true,
@@ -54,16 +54,16 @@ export const getTripById = async (req: AuthRequest, res: Response): Promise<void
         users: true,
         expenses: {
           include: {
-            user: true, // Payer of the expense
+            user: true, 
             participants: {
               include: {
-                user: true // Participant details
+                user: true 
               }
             }
           },
           orderBy: { createdAt: "desc" }
         },
-        user: true, // The owner of the trip
+        user: true, 
       },
     });
     if (!trip) {
@@ -71,7 +71,7 @@ export const getTripById = async (req: AuthRequest, res: Response): Promise<void
       return;
     }
 
-    // Asigură-te că utilizatorul curent are acces la acest trip (este owner sau participant)
+    
     const isOwnerOrParticipant = trip.userId === currentUserId || trip.users.some(u => u.id === currentUserId);
     if (!isOwnerOrParticipant) {
       res.status(403).json({ message: "Access denied to this trip." });
@@ -87,7 +87,7 @@ export const getTripById = async (req: AuthRequest, res: Response): Promise<void
 
 export const createTrip = async (req: AuthRequest, res: Response): Promise<void> => {
   const { name } = req.body;
-  const userId = req.userId; // Preia userId din tokenul de autentificare
+  const userId = req.userId; 
 
   if (!name || !userId) {
     res.status(400).json({ message: "Trip name and user ID are required" });
@@ -98,8 +98,8 @@ export const createTrip = async (req: AuthRequest, res: Response): Promise<void>
     const newTrip = await prisma.trip.create({
       data: {
         name,
-        userId, // Setează creatorul trip-ului
-        users: { // Adaugă creatorul trip-ului ca participant implicit
+        userId, 
+        users: { 
           connect: { id: userId }
         }
       },
@@ -122,7 +122,7 @@ export const updateTrip = async (req: AuthRequest, res: Response): Promise<void>
   }
 
   try {
-    // Verifică dacă utilizatorul curent este proprietarul trip-ului
+    
     const trip = await prisma.trip.findUnique({
       where: { id },
       select: { userId: true },
@@ -154,7 +154,7 @@ export const deleteTrip = async (req: AuthRequest, res: Response): Promise<void>
   const currentUserId = req.userId;
 
   try {
-    // Verifică dacă utilizatorul curent este proprietarul trip-ului
+    
     const trip = await prisma.trip.findUnique({
       where: { id },
       select: { userId: true },
@@ -170,13 +170,13 @@ export const deleteTrip = async (req: AuthRequest, res: Response): Promise<void>
       return;
     }
 
-    // Șterge întâi relațiile dependente (expenses, payments, notifications legate de expenses)
-    // Prisma va gestiona onDelete: Cascade dacă este configurat corect în schema.
-    // Dacă nu, va trebui să ștergi manual:
-    // await prisma.expense.deleteMany({ where: { tripId: id } });
-    // await prisma.payment.deleteMany({ where: { tripId: id } });
-    // etc.
-    // Sau folosește tranzacții pentru a te asigura că totul se șterge Atomic
+    
+    
+    
+    
+    
+    
+    
     await prisma.trip.delete({ where: { id } });
     res.json({ message: "Trip deleted successfully" });
   } catch (error) {
@@ -192,7 +192,7 @@ export const getTripExpenses = async (req: AuthRequest, res: Response): Promise<
   try {
     const trip = await prisma.trip.findUnique({
       where: { id },
-      include: { users: true } // Verifică dacă utilizatorul este membru al trip-ului
+      include: { users: true } 
     });
 
     if (!trip) {
@@ -225,11 +225,11 @@ export const getTripExpenses = async (req: AuthRequest, res: Response): Promise<
   }
 };
 
-// Exportă direct funcția createExpense din expense.controller
+
 export { createExpense as createTripExpense };
 
 
-// Fix pentru getTripUsers: Asigură-te că utilizatorul autentificat face parte din trip.
+
 export const getTripUsers = async (req: AuthRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const currentUserId = req.userId;
@@ -244,7 +244,7 @@ export const getTripUsers = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    // Verifică dacă utilizatorul curent este membru al trip-ului
+    
     const isMember = trip.users.some(u => u.id === currentUserId) || trip.userId === currentUserId;
     if (!isMember) {
       res.status(403).json({ message: "Access denied to this trip's users." });
@@ -259,9 +259,9 @@ export const getTripUsers = async (req: AuthRequest, res: Response): Promise<voi
 };
 
 export const addExistingFriendToTrip = async (req: AuthRequest, res: Response): Promise<void> => {
-  const { id } = req.params; // tripId
-  const { userId: friendIdToAdd } = req.body; // ID-ul prietenului de adăugat
-  const currentUserId = req.userId; // ID-ul utilizatorului autentificat
+  const { id } = req.params; 
+  const { userId: friendIdToAdd } = req.body; 
+  const currentUserId = req.userId; 
 
   if (!friendIdToAdd) {
     res.status(400).json({ message: "Friend ID is required" });
@@ -269,10 +269,10 @@ export const addExistingFriendToTrip = async (req: AuthRequest, res: Response): 
   }
 
   try {
-    // Verifică dacă trip-ul există și dacă utilizatorul curent este membru sau proprietar
+    
     const trip = await prisma.trip.findUnique({
       where: { id },
-      include: { users: true }, // Include userii existenți pentru verificare
+      include: { users: true }, 
     });
 
     if (!trip) {
@@ -286,20 +286,20 @@ export const addExistingFriendToTrip = async (req: AuthRequest, res: Response): 
       return;
     }
 
-    // Verifică dacă prietenul de adăugat există
+    
     const userToAdd = await prisma.user.findUnique({ where: { id: friendIdToAdd } });
     if (!userToAdd) {
       res.status(404).json({ message: "User to add not found" });
       return;
     }
 
-    // Verifică dacă prietenul este deja în trip
+    
     if (trip.users.some(u => u.id === friendIdToAdd)) {
       res.status(400).json({ message: "User is already a member of this trip." });
       return;
     }
 
-    // Adaugă utilizatorul la trip
+    
     const updatedTrip = await prisma.trip.update({
       where: { id },
       data: {
@@ -317,7 +317,7 @@ export const addExistingFriendToTrip = async (req: AuthRequest, res: Response): 
   }
 };
 
-// Functie noua: elimina un user din trip
+
 export const removeUserFromTrip = async (req: AuthRequest, res: Response): Promise<void> => {
   const { id: tripId, userId: userToRemoveId } = req.params;
   const currentUserId = req.userId;
@@ -338,7 +338,7 @@ export const removeUserFromTrip = async (req: AuthRequest, res: Response): Promi
       return;
     }
 
-    // Doar proprietarul trip-ului poate elimina membri, sau membrul se poate auto-elimina
+    
     const isOwner = trip.userId === currentUserId;
     const isSelfRemoval = userToRemoveId === currentUserId;
 
@@ -347,21 +347,21 @@ export const removeUserFromTrip = async (req: AuthRequest, res: Response): Promi
       return;
     }
 
-    // Asigură-te că utilizatorul de eliminat este un membru al trip-ului
+    
     const isMember = trip.users.some(u => u.id === userToRemoveId);
     if (!isMember) {
       res.status(400).json({ message: "User is not a member of this trip." });
       return;
     }
 
-    // Nu permite proprietarului să se elimine singur dacă el este singurul membru.
-    // Această logică ar putea fi mai complexă, dar pentru început, nu permite ca un trip să rămână fără owner.
+    
+    
     if (isSelfRemoval && trip.userId === currentUserId && trip.users.length === 1) {
       res.status(400).json({ message: "Cannot remove yourself if you are the only member and owner of the trip." });
       return;
     }
 
-    // Elimina utilizatorul din trip
+    
     const updatedTrip = await prisma.trip.update({
       where: { id: tripId },
       data: {

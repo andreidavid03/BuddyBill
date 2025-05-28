@@ -19,7 +19,7 @@ export const getStatus = async (req: AuthRequest, res: Response): Promise<void> 
     let totalYouAreOwed = 0;
     let totalYouOwe = 0;
 
-    // 🔥 1. Cheltuieli plătite de tine
+    
     const expensesPaidByMe = await prisma.expense.findMany({
       where: {
         userId: userId,
@@ -38,7 +38,7 @@ export const getStatus = async (req: AuthRequest, res: Response): Promise<void> 
       });
     });
 
-    // 🔥 2. Cheltuieli plătite de alții unde ești participant
+    
     const expensesWhereIAmParticipant = await prisma.expense.findMany({
       where: {
         participants: { some: { userId: userId } },
@@ -59,7 +59,7 @@ export const getStatus = async (req: AuthRequest, res: Response): Promise<void> 
 
     const balance = totalYouAreOwed - totalYouOwe;
 
-    // 🔥 3. Trip-level Balances
+    
     const tripBalances: {
       tripId: string;
       tripName: string;
@@ -110,7 +110,7 @@ export const getStatus = async (req: AuthRequest, res: Response): Promise<void> 
       }
     });
 
-    // 🔥 4. Payments
+    
     const paymentsMade = await prisma.payment.findMany({
       where: { payerId: userId },
       include: { receiver: true, trip: { select: { name: true } } },

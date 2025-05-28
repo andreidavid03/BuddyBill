@@ -61,7 +61,7 @@ export const acceptFriendRequest = async (req: AuthRequest, res: Response): Prom
       data: { status: "ACCEPTED" },
     });
 
-    // 🔔 Notificări pentru ambele părți
+    
     await prisma.notification.create({
       data: {
         userId: friendship.initiatorId,

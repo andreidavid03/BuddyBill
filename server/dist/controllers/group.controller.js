@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getGroups = exports.createGroup = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
-// Creare grup
+
 const createGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name } = req.body;
     const userId = req.userId;
@@ -33,7 +33,7 @@ const createGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.createGroup = createGroup;
-// Listare grupuri
+
 const getGroups = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.userId;
     try {

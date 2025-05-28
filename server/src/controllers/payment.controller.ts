@@ -11,7 +11,7 @@ interface AuthRequest extends Request {
   };
 }
 
-// Setează o cheltuială ca plătită (opțional)
+
 export const markAsPaid = async (req: AuthRequest, res: Response): Promise<void> => {
   const { expenseId } = req.params;
 
@@ -35,7 +35,7 @@ export const markAsPaid = async (req: AuthRequest, res: Response): Promise<void>
   }
 };
 
-// Înregistrează o decontare (settlement) și notificări
+
 export const settlePayment = async (req: AuthRequest, res: Response): Promise<void> => {
   const { fromUserId, toUserId, amount, tripId } = req.body;
 
@@ -67,7 +67,7 @@ export const settlePayment = async (req: AuthRequest, res: Response): Promise<vo
       },
     });
 
-    // 🔔 Notificări pentru ambii
+    
     await prisma.notification.create({
       data: {
         userId: toUserId,
@@ -92,7 +92,7 @@ export const settlePayment = async (req: AuthRequest, res: Response): Promise<vo
   }
 };
 
-// Obține toate plățile (expenses și settlements) pentru un trip
+
 export const getPaymentsForTrip = async (req: AuthRequest, res: Response): Promise<void> => {
   const { tripId } = req.params;
 

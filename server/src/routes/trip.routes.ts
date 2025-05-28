@@ -1,4 +1,4 @@
-// server/src/routes/trip.routes.ts
+
 import express from "express";
 import {
   getAllTrips,
@@ -10,7 +10,7 @@ import {
   createTripExpense,
   getTripUsers,
   addExistingFriendToTrip,
-  removeUserFromTrip, // Adăugat
+  removeUserFromTrip, 
 } from "../controllers/trip.controller";
 import { verifyToken } from "../middleware/auth.middleware";
 
@@ -27,6 +27,6 @@ router.post("/:id/expenses", verifyToken, createTripExpense);
 
 router.get("/:id/users", verifyToken, getTripUsers);
 router.post("/:id/users", verifyToken, addExistingFriendToTrip);
-router.delete("/:id/users/:userId", verifyToken, removeUserFromTrip); // Rută nouă pentru eliminare user
+router.delete("/:id/users/:userId", verifyToken, removeUserFromTrip); 
 
 export default router;

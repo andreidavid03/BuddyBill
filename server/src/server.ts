@@ -1,9 +1,8 @@
-// server/src/server.ts
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes";
-import expenseRoutes from "./routes/expense.routes"; // Păstrează dacă ai rute globale de expense
+import expenseRoutes from "./routes/expense.routes"; 
 import balanceRoutes from "./routes/balance.routes";
 import transactionRoutes from "./routes/transaction.routes";
 import paymentRoutes from "./routes/payment.routes";
@@ -25,7 +24,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use("/auth", authRoutes);
-app.use("/expenses", expenseRoutes); // Poți elimina asta dacă toate rutele de expenses sunt sub /trips/:id/expenses
+app.use("/expenses", expenseRoutes); 
 app.use("/balances", balanceRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/payments", paymentRoutes);

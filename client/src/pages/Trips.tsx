@@ -75,14 +75,14 @@ const Trips = () => {
             backdropFilter: "blur(10px)",
             width: "100%",
             maxWidth: 600,
-            mx: "auto", // 👈 Centrat pe orizontală
+            mx: "auto", 
           }}
         >
           <Typography
             variant="h4"
             align="center"
             gutterBottom
-            sx={{ color: "#ffffff" }} // 👈 Alb clar!
+            sx={{ color: "#ffffff" }} 
           >
             Your Trips
           </Typography>
